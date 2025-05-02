@@ -85,7 +85,7 @@ Build a small part of a card memory game based on your assigned role. This is me
 ---
 
 ### 📝 **Submission:**
-- Once completed, please submit your work to **[admin@belolabs.com](mailto:admin@belolabs.com)**.
+- Once completed, please submit your work to **[career@aetheriumhub.com](mailto:career@aetheriumhub.com)**.
 - Share any notes, assumptions, or challenges you encountered.
 
 ### 💡 **Need Help?**
