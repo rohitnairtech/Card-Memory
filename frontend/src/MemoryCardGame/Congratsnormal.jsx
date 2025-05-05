@@ -5,6 +5,7 @@ import { styled } from "@mui/system";
 import background from "../assets/images/celebration.gif"; // Background image
 import bgMusic from "../assets/audio/celebrate.mp3"; // Background music file
 import congratulationImage from "../assets/images/congrats2.png"; // Path to your congratulation image
+import HistoryPixelButton from "../MemoryCardGame/components/HistoryPixelButton"; // Import your HistoryPixelButton component
 
 // Styled Components
 const PixelBox = styled(Box)(({ theme }) => ({
@@ -23,7 +24,7 @@ const PixelBox = styled(Box)(({ theme }) => ({
 }));
 
 const ImageContainer = styled(Box)(() => ({
-  position: "relative", 
+  position: "relative",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
@@ -148,6 +149,8 @@ const Congtnormal = () => {
         <PixelButton onClick={handlePlayAgain}>Yes</PixelButton>
         <PixelButton onClick={handleExit}>No</PixelButton>
       </ButtonContainer>
+      <HistoryPixelButton />
+
     </PixelBox>
   );
 };

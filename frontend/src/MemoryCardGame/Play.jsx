@@ -6,8 +6,11 @@ import calmBackground from "../assets/images/calm-wallpaper.jpg";
 import backgroundMusic from "../assets/audio/background-music.mp3";
 import buttonHoverSound from "../assets/audio/button-hover.mp3";
 import buttonClickSound from "../assets/audio/button-click.mp3";
+import HistoryPixelButton from "./components/HistoryPixelButton";
 import { X } from "lucide-react";
 import "./Play.css";
+
+Modal.setAppElement('#root');
 
 const modalStyles = {
   overlay: {
@@ -51,7 +54,7 @@ const modalPlayStyles = {
     borderRadius: "20px",
     padding: "40px",
     maxWidth: "600px",
-    height: "200px",
+    height: "300px",
     width: "90%",
     color: "#fff",
     textAlign: "center",
@@ -60,6 +63,8 @@ const modalPlayStyles = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
   },
 };
 
@@ -69,7 +74,7 @@ const Play = () => {
   const [PlaymodalIsOpen, setModalPlayIsOpen] = useState(false);
   const [difficulty, setDifficulty] = useState(null);
   const [isCalmMode, setIsCalmMode] = useState(false);
-  
+
   const [bgVolume, setBgVolume] = useState(
     localStorage.getItem("bgVolume") !== null ? parseInt(localStorage.getItem("bgVolume"), 10) : 50
   );
@@ -131,23 +136,31 @@ const Play = () => {
     setMutedSfx(newVolume === 0);
   };
 
-  const toggleCalmMode = () => {
-    setIsCalmMode((prev) => !prev);
-    playClickSound();
-  };
+  // UNUSED CODE 🔥
+  // const toggleCalmMode = () => {
+  //   setIsCalmMode((prev) => !prev);
+  //   playClickSound();
+  // };
 
   const playHoverSound = () => {
-    hoverAudioRef.current.currentTime = 0;
-    hoverAudioRef.current.play().catch((error) =>
-      console.error("Hover sound playback failed:", error)
-    );
+    if (!hoverAudioRef.current || mutedSfx) return;
+    if (document.documentElement.hasAttribute('data-user-interacted')) {
+      hoverAudioRef.current.currentTime = 0;
+      hoverAudioRef.current.play().catch((error) =>
+        console.error("Hover sound playback failed:", error)
+      );
+    }
   };
 
   const playClickSound = () => {
+    if (!clickAudioRef.current || mutedSfx) return;
+
     clickAudioRef.current.currentTime = 0;
     clickAudioRef.current.play().catch((error) =>
       console.error("Click sound playback failed:", error)
     );
+
+    document.documentElement.setAttribute('data-user-interacted', 'true');
   };
 
   const SettingopenModal = () => {
@@ -157,6 +170,7 @@ const Play = () => {
 
   const SettingcloseModal = () => {
     setModalSettingIsOpen(false);
+    setDifficulty(null);
     playClickSound();
   };
 
@@ -168,6 +182,7 @@ const Play = () => {
   const PlaycloseModal = () => {
     playClickSound();
     setModalPlayIsOpen(false);
+    setDifficulty(null);
   };
 
   const handleDifficultySelect = (level) => {
@@ -242,6 +257,8 @@ const Play = () => {
         >
           Settings
         </button>
+        <br/>
+        <HistoryPixelButton/>
       </div>
       <Modal
         isOpen={SettingsmodalIsOpen}
@@ -351,9 +368,8 @@ const Play = () => {
               handleDifficultySelect("green");
               playClickSound();
             }}
-            className={`difficulty-button green ${
-              difficulty === "green" && !isCalmMode ? "selected" : ""
-            } ${isCalmMode && difficulty === "green" ? "calm-selected" : ""}`}
+            className={`difficulty-button green ${difficulty === "green" && !isCalmMode ? "selected" : ""
+              } ${isCalmMode && difficulty === "green" ? "calm-selected" : ""}`}
             onMouseEnter={playHoverSound}
           >
             Easy
@@ -363,9 +379,8 @@ const Play = () => {
               handleDifficultySelect("yellow");
               playClickSound();
             }}
-            className={`difficulty-button yellow ${
-              difficulty === "yellow" && !isCalmMode ? "selected" : ""
-            } ${isCalmMode && difficulty === "yellow" ? "calm-selected" : ""}`}
+            className={`difficulty-button yellow ${difficulty === "yellow" && !isCalmMode ? "selected" : ""
+              } ${isCalmMode && difficulty === "yellow" ? "calm-selected" : ""}`}
             onMouseEnter={playHoverSound}
           >
             Normal
@@ -375,24 +390,27 @@ const Play = () => {
               handleDifficultySelect("red");
               playClickSound();
             }}
-            className={`difficulty-button red ${
-              difficulty === "red" && !isCalmMode ? "selected" : ""
-            } ${isCalmMode && difficulty === "red" ? "calm-selected" : ""}`}
+            className={`difficulty-button red ${difficulty === "red" && !isCalmMode ? "selected" : ""
+              } ${isCalmMode && difficulty === "red" ? "calm-selected" : ""}`}
             onMouseEnter={playHoverSound}
           >
             Hard
           </button>
         </div>
 
-        <div>
-          <button
-            onClick={handlePlay}
-            className="play-button"
-            onMouseEnter={playHoverSound}
-          >
-            Accept
-          </button>
-        </div>
+        {
+          difficulty && (
+            <div>
+              <button
+                onClick={handlePlay}
+                className="play-button"
+                onMouseEnter={playHoverSound}
+              >
+                Accept
+              </button>
+            </div>
+          )
+        }
       </Modal>
     </div>
   );

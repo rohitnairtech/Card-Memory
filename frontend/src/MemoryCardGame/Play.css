@@ -344,20 +344,21 @@ input:checked + .slider:before {
 }
   
   .play-button {
-    margin-top: 50px;
-    padding: 10px 20px;
-    background: #4a4e69;
-    color: #fff;
-    font-family: "Press Start 2P", sans-serif;
-    font-size: 18px;
-    border: 2px solid #9a8c98;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
-  }
+  margin-top: 30px;
+  padding: 12px 30px;
+  background: linear-gradient(90deg, #4a4e69, #22223b);
+  color: #fff;
+  font-family: "Press Start 2P", sans-serif;
+  font-size: 18px;
+  border: 2px solid #9a8c98;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+  display: inline-block;
+}
   
-  .play-button:hover {
-    background: #6c757d;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 8px 16px rgba(0, 0, 0, 0.6);
-    transform: scale(1.1);
-  }
+.play-button:hover {
+  background: linear-gradient(90deg, #6c757d, #343a40);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 8px 16px rgba(0, 0, 0, 0.6);
+  transform: scale(1.1);
+}

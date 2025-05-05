@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { useSpring, animated } from "@react-spring/web";
 import background from "../assets/images/mode1.gif";
 import bgMusic from "../assets/audio/memory-bg.mp3";
-import axios from "axios";
+import { saveGame } from "../services/axios";
 
 
 
@@ -50,9 +50,7 @@ const shuffleArray = (array) => {
 };
 const saveGameData = async (gameData) => {
   try {
-    const response = await axios.post("http://localhost:5000/api/memory/save", gameData, {
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await saveGame(gameData);
 
     console.log("Game data saved successfully", response.data);
   } catch (error) {
@@ -61,7 +59,7 @@ const saveGameData = async (gameData) => {
 };
 
 // Styled Components
-const StyledGameContainer = styled(Box)(({ theme, mouseDisabled }) => ({
+const StyledGameContainer = styled(Box)(({ theme, $mouseDisabled }) => ({
   minHeight: "100vh",
   width: "100vw",
   display: "flex",
@@ -73,7 +71,7 @@ const StyledGameContainer = styled(Box)(({ theme, mouseDisabled }) => ({
   backgroundPosition: "center",
   backgroundRepeat: "no-repeat",
   position: "relative",
-  pointerEvents: mouseDisabled ? "none" : "auto", 
+  pointerEvents: $mouseDisabled ? "none" : "auto", 
 
 }));
 
@@ -420,7 +418,7 @@ const MemoryCardGame = () => {
   };
 
   return (
-    <StyledGameContainer mouseDisabled={mouseDisabled}>
+    <StyledGameContainer $mouseDisabled={mouseDisabled}>
       <audio ref={audioRef} src={bgMusic} loop />
       <PixelButton onClick={handleBackButton} sx={{ alignSelf: "flex-start", margin: 2 }}>
         Back

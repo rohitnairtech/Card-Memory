@@ -13,4 +13,6 @@ const saveSchema = new mongoose.Schema({
   timeTaken: { type: Number, required: true },
 });
 
+saveSchema.index({ userID: 1, gameDate: -1 }); // Index for faster queries
+
 module.exports = mongoose.model('Save', saveSchema);

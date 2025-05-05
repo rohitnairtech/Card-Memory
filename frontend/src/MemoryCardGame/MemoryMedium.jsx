@@ -6,21 +6,20 @@ import PropTypes from "prop-types";
 import { useSpring, animated } from "@react-spring/web";
 import background from "../assets/images/mode1.gif";
 import bgMusic from "../assets/audio/memory-bg.mp3";
-import axios from "axios";
-
+import { saveGame } from "../services/axios";
 
 
 const defaultDifficulty = "Normal";
 
 // Card Images
 const cardImages = [
-    { id: 1, image: "/images/meteor.png" },
-    { id: 2, image: "/images/meteor.png" },
-    { id: 3, image: "/images/moon.png" },
-    { id: 4, image: "/images/moon.png" },
-    { id: 5, image: "/images/comet.png" },
-    { id: 6, image: "/images/comet.png" },
-  ];
+  { id: 1, image: "/images/meteor.png" },
+  { id: 2, image: "/images/meteor.png" },
+  { id: 3, image: "/images/moon.png" },
+  { id: 4, image: "/images/moon.png" },
+  { id: 5, image: "/images/comet.png" },
+  { id: 6, image: "/images/comet.png" },
+];
 
 // Audio files for matching and final congratulation
 const matchAudioFiles = [
@@ -42,10 +41,7 @@ const shuffleArray = (array) => {
 };
 const saveGameData = async (gameData) => {
   try {
-    const response = await axios.post("http://localhost:5000/api/memory/save", gameData, {
-      headers: { "Content-Type": "application/json" },
-    });
-
+    const response = await saveGame(gameData);
     console.log("Game data saved successfully", response.data);
   } catch (error) {
     console.error("Error saving game data:", error.response ? error.response.data : error.message);
@@ -65,7 +61,7 @@ const StyledGameContainer = styled(Box)(({ theme, mouseDisabled }) => ({
   backgroundPosition: "center",
   backgroundRepeat: "no-repeat",
   position: "relative",
-  pointerEvents: mouseDisabled ? "none" : "auto", 
+  pointerEvents: mouseDisabled ? "none" : "auto",
 
 }));
 
@@ -273,18 +269,18 @@ const MemoryMedium = () => {
 
   const handleSaveNewGame = () => {
     saveGameData({
-        userID,
-        gameDate: new Date(),
-        failed: failedAttempts,
-        difficulty: defaultDifficulty,
-        completed: 0,
-        timeTaken: timer,
+      userID,
+      gameDate: new Date(),
+      failed: failedAttempts,
+      difficulty: defaultDifficulty,
+      completed: 0,
+      timeTaken: timer,
     });
-};
-  
+  };
+
   const handleNewGame = () => {
-   
-    
+
+
     setCards(shuffleArray(cardImages));
     setMatchedCards([]);
     setFlippedCards([]);
@@ -294,18 +290,18 @@ const MemoryMedium = () => {
     setInitialReveal(true);
     setAudioIndex(0); // Reset audio index
 
-    
+
     const mouseDisableDuration = 2000;
     setMouseDisabled(true);
     setTimeout(() => {
       setMouseDisabled(false);  // Re-enable mouse events after mouseDisableDuration
     }, mouseDisableDuration);
 
-  
+
     setTimeout(() => {
       setInitialReveal(false);
       setTimerActive(true);
-   
+
     }, 1500);
   };
   const handleBackButton = () => {
@@ -321,8 +317,8 @@ const MemoryMedium = () => {
   const handleModalNo = () => {
     setOpenModal(false); // Close the modal and resume game
   };
-  
- 
+
+
   useEffect(() => {
     handleNewGame();
     const handleFirstClick = () => {
@@ -366,38 +362,38 @@ const MemoryMedium = () => {
     }
   }, [flippedCards, audioIndex, sfxVolume]);
 
-  
+
   useEffect(() => {
     if (matchedCards.length === cards.length && cards.length > 0) {
-        // Play the congratulations audio
-        const congrats = new Audio(congratsAudio);
-        congrats.volume = sfxVolume / 100;
-        congrats.play();
+      // Play the congratulations audio
+      const congrats = new Audio(congratsAudio);
+      congrats.volume = sfxVolume / 100;
+      congrats.play();
 
-        // Stop the timer before saving the game data
-        setTimerActive(false);
+      // Stop the timer before saving the game data
+      setTimerActive(false);
 
-        // Ensure the game data is saved only once
-        const saveData = async () => {
-            try {
-                await saveGameData({
-                    userID,
-                    gameDate: new Date(),
-                    failed: failedAttempts,
-                    difficulty: defaultDifficulty,
-                    completed: 1,  
-                    timeTaken: timer,
-                });
-                localStorage.setItem("gameCompleted", "true");
-                setTimeout(() => navigate("/congt-normal"), 1000);
-            } catch (error) {
-                console.error("Error saving game data:", error);
-            }
-        };
+      // Ensure the game data is saved only once
+      const saveData = async () => {
+        try {
+          await saveGameData({
+            userID,
+            gameDate: new Date(),
+            failed: failedAttempts,
+            difficulty: defaultDifficulty,
+            completed: 1,
+            timeTaken: timer,
+          });
+          localStorage.setItem("gameCompleted", "true");
+          setTimeout(() => navigate("/congt-normal"), 1000);
+        } catch (error) {
+          console.error("Error saving game data:", error);
+        }
+      };
 
-        saveData();
+      saveData();
     }
-}, [matchedCards, cards.length, navigate, sfxVolume, failedAttempts, timer]);
+  }, [matchedCards, cards.length, navigate, sfxVolume, failedAttempts, timer]);
 
 
   const userID = localStorage.getItem("userID"); // ✅ Fetch from local storage or auth context
@@ -415,50 +411,52 @@ const MemoryMedium = () => {
   return (
     <StyledGameContainer mouseDisabled={mouseDisabled}>
       <audio ref={audioRef} src={bgMusic} loop />
-      <PixelButton onClick={handleBackButton} sx={{ position: "absolute",   // Absolute positioning
-    top: "20px",            // Adjust the distance from the top
-    left: "20px",           // Adjust the distance from the left
-    padding: "15px 30px",   // Ensure button size is consistent
-    fontSize: "14px",   }}>
+      <PixelButton onClick={handleBackButton} sx={{
+        position: "absolute",   // Absolute positioning
+        top: "20px",            // Adjust the distance from the top
+        left: "20px",           // Adjust the distance from the left
+        padding: "15px 30px",   // Ensure button size is consistent
+        fontSize: "14px",
+      }}>
         Back
       </PixelButton>
       <PixelTimerBox>Timer: {timer}s</PixelTimerBox>
       <PixelBox>Learning Moments: {failedAttempts}</PixelBox>
       <Grid container spacing={10} justifyContent="center" sx={{ maxWidth: 700, marginTop: "-50px" }}>
-  {cards.map((card) => (
-    <Grid item xs={4} key={card.id} > {/* Changed from xs={3} to xs={4} */}
-      <Card
-        card={card}
-        handleClick={() => handleCardClick(card)}
-        flipped={initialReveal || flippedCards.some((c) => c.id === card.id) || matchedCards.includes(card.id)}
-        matched={matchedCards.includes(card.id)}
-      />
-    </Grid>
-  ))}
-</Grid>
+        {cards.map((card) => (
+          <Grid item xs={4} key={card.id} > {/* Changed from xs={3} to xs={4} */}
+            <Card
+              card={card}
+              handleClick={() => handleCardClick(card)}
+              flipped={initialReveal || flippedCards.some((c) => c.id === card.id) || matchedCards.includes(card.id)}
+              matched={matchedCards.includes(card.id)}
+            />
+          </Grid>
+        ))}
+      </Grid>
       <Box sx={{ mt: 2, textAlign: "center" }}>
-     
-<PixelButton onClick={() => { handleSaveNewGame(); handleNewGame(); }} sx={{ mt: 2 }}>
+
+        <PixelButton onClick={() => { handleSaveNewGame(); handleNewGame(); }} sx={{ mt: 2 }}>
           New Game
         </PixelButton>
       </Box>
 
 
       <Modal open={openModal} onClose={handleModalNo}>
-  <Box sx={modalStyle}>
-    <PixelTypography variant="h6">
-      Are you sure you want to go back to the play page?
-    </PixelTypography>
-    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, marginTop: 2 }}>
-      <PixelButtonModal onClick={() => { handleSaveNewGame(); handleModalYes(); }} variant="contained" color="primary">
-        Yes
-      </PixelButtonModal>
-      <PixelButtonModal onClick={handleModalNo} variant="contained" color="secondary">
-        No
-      </PixelButtonModal>
-    </Box>
-  </Box>
-</Modal>
+        <Box sx={modalStyle}>
+          <PixelTypography variant="h6">
+            Are you sure you want to go back to the play page?
+          </PixelTypography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, marginTop: 2 }}>
+            <PixelButtonModal onClick={() => { handleSaveNewGame(); handleModalYes(); }} variant="contained" color="primary">
+              Yes
+            </PixelButtonModal>
+            <PixelButtonModal onClick={handleModalNo} variant="contained" color="secondary">
+              No
+            </PixelButtonModal>
+          </Box>
+        </Box>
+      </Modal>
     </StyledGameContainer>
   );
 };
